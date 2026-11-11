@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DARKBYTE CLOUD — Premium Hosting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      min-height: 100%;
+    }
+
+    /* ============ LOADING SCREEN (4s) ============ */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #040405;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+      overflow: hidden;
+    }
+
+    #loader::before {
+      content: "";
+      position: absolute;
+      inset: -50%;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(120,120,150,0.025) 40px, rgba(120,120,150,0.025) 41px),
+        repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(120,120,150,0.025) 40px, rgba(120,120,150,0.025) 41px);
+      animation: gridScan 2.5s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridScan {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(40px, 40px); }
+    }
+
+    #loader::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 40% at 50% 50%, rgba(100, 100, 130, 0.12) 0%, transparent 70%);
+      animation: pulseGlow 1.8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes pulseGlow {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loader-stage {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.2rem;
+    }
+
+    .loader-logo {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .ring-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 200px;
+      pointer-events: none;
+    }
+
+    .ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid transparent;
+    }
+
+    .ring:nth-child(1) {
+      border-top-color: #a0a0b8;
+      border-right-color: #a0a0b8;
+      animation: spinCW 1.2s linear infinite;
+    }
+
+    .ring:nth-child(2) {
+      inset: 12px;
+      border-bottom-color: #707080;
+      border-left-color: #707080;
+      animation: spinCCW 1.6s linear infinite;
+    }
+
+    .ring:nth-child(3) {
+      inset: 24px;
+      border-top-color: #505060;
+      border-right-color: #505060;
+      animation: spinCW 2s linear infinite;
+    }
+
+    @keyframes spinCW {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes spinCCW {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
+    }
+
+    .loader-logo img {
+      height: 80px;
+      width: auto;
+      border-radius: 18px;
+      padding: 10px;
+      background: #0e0e11;
+      border: 1px solid #2a2a34;
+      animation: logoPulse 1.4s ease-in-out infinite;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 40px rgba(120, 120, 140, 0.12);
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.06); filter: brightness(1.15); }
+    }
+
+    .loader-logo .brand {
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #e8e8f0;
+      background: linear-gradient(90deg, #2a2a38, #ffffff, #2a2a38, #ffffff, #2a2a38);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: brandRush 1.8s linear infinite;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes brandRush {
+      0% { background-position: 0% center; }
+      100% { background-position: 300% center; }
+    }
+
+    .energy-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 48px;
+      padding: 0 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .energy-bars .bar {
+      width: 8px;
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(180deg, #c0c0d8, #4a4a58);
+      animation: barJump 0.7s ease-in-out infinite alternate;
+    }
+
+    .energy-bars .bar:nth-child(1) { height: 30%; animation-delay: 0s; }
+    .energy-bars .bar:nth-child(2) { height: 55%; animation-delay: 0.08s; }
+    .energy-bars .bar:nth-child(3) { height: 80%; animation-delay: 0.16s; }
+    .energy-bars .bar:nth-child(4) { height: 100%; animation-delay: 0.24s; }
+    .energy-bars .bar:nth-child(5) { height: 75%; animation-delay: 0.32s; }
+    .energy-bars .bar:nth-child(6) { height: 50%; animation-delay: 0.4s; }
+    .energy-bars .bar:nth-child(7) { height: 35%; animation-delay: 0.48s; }
+    .energy-bars .bar:nth-child(8) { height: 65%; animation-delay: 0.56s; }
+    .energy-bars .bar:nth-child(9) { height: 90%; animation-delay: 0.64s; }
+    .energy-bars .bar:nth-child(10) { height: 60%; animation-delay: 0.72s; }
+    .energy-bars .bar:nth-child(11) { height: 40%; animation-delay: 0.8s; }
+    .energy-bars .bar:nth-child(12) { height: 85%; animation-delay: 0.88s; }
+
+    @keyframes barJump {
+      0% { transform: scaleY(0.3); opacity: 0.5; }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+
+    .loader-progress {
+      width: 300px;
+      height: 4px;
+      background: #14141a;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(100, 100, 140, 0.1);
+    }
+
+    .loader-progress .fill {
+      position: absolute;
+      inset: 0;
+      width: 0%;
+      background: linear-gradient(90deg, #3a3a48, #d0d0e8, #3a3a48, #d0d0e8, #3a3a48);
+      background-size: 300% 100%;
+      border-radius: 4px;
+      animation: progressRace 1s linear infinite;
+      will-change: width;
+    }
+
+    @keyframes progressRace {
+      0% { background-position: 300% 0; }
+      100% { background-position: -300% 0; }
+    }
+
+    .loader-hint {
+      font-size: 0.72rem;
+      color: #7a7a8a;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: 0.15rem;
+      animation: hintFlicker 1.2s steps(2) infinite;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes hintFlicker {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    .loader-dots {
+      display: flex;
+      gap: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .loader-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4a4a58;
+      animation: dotRapid 0.9s ease-in-out infinite;
+    }
+
+    .loader-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .loader-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes dotRapid {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; background: #4a4a58; }
+      50% { transform: translateY(-10px) scale(1.3); opacity: 1; background: #d0d0e8; }
+    }
+
+    /* ============ MAIN PAGE WITH HOME-SCREEN ENERGY ============ */
+    body {
+      background-color: #060608;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(70, 70, 82, 0.5) 0%, transparent 35%),
+        radial-gradient(circle at 80% 70%, rgba(55, 55, 68, 0.45) 0%, transparent 40%),
+        radial-gradient(circle at 40% 80%, rgba(80, 80, 95, 0.4) 0%, transparent 45%),
+        radial-gradient(circle at 70% 20%, rgba(50, 50, 62, 0.6) 0%, transparent 50%),
+        repeating-linear-gradient(45deg, 
+          rgba(255, 255, 255, 0.012) 0px, 
+          rgba(255, 255, 255, 0.012) 2px,
+          transparent 2px, 
+          transparent 6px
+        ),
+        repeating-linear-gradient(-45deg, 
+          rgba(255, 255, 255, 0.008) 0px, 
+          rgba(255, 255, 255, 0.008) 1px,
+          transparent 1px, 
+          transparent 5px
+        ),
+        linear-gradient(180deg, #050507 0%, #0e0e12 40%, #0a0a0e 70%, #070709 100%);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 60px 60px, 80px 80px, 100% 100%;
+      background-attachment: fixed;
+      color: #d4d4dc;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      padding: 2rem 1.5rem 4rem;
+      animation: bgShift 40s ease-in-out infinite alternate;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    @keyframes bgShift {
+      0% { background-position: 0% 0%, 100% 100%, 0% 0%, 100% 0%, 0 0, 0 0, 0% 0%; }
+      50% { background-position: 2% 1%, 98% 99%, 2% 1%, 98% 1%, 5px 5px, -5px 5px, 0% 0%; }
+      100% { background-position: -1% -1%, 101% 101%, -1% -1%, 101% -1%, -3px 3px, 3px -3px, 0% 0%; }
+    }
+
+    /* Animated grid overlay for home screen */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -50%;
+      background:
+        repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(120,120,150,0.018) 60px, rgba(120,120,150,0.018) 61px),
+        repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(120,120,150,0.018) 60px, rgba(120,120,150,0.018) 61px);
+      animation: gridScan 8s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      display: block;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 180px 180px;
+      z-index: 1;
+      opacity: 0.5;
+      mix-blend-mode: overlay;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ============ HERO SECTION WITH ENERGY ============ */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2.5rem 1rem 3rem;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1.1rem;
+      border-radius: 100px;
+      background: rgba(32, 32, 40, 0.8);
+      border: 1px solid #3a3a48;
+      color: #b0b0c0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: badgeGlow 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes badgeGlow {
+      0% { box-shadow: 0 0 0 rgba(160, 160, 200, 0); border-color: #3a3a48; }
+      100% { box-shadow: 0 0 24px rgba(160, 160, 200, 0.15); border-color: #50505e; }
+    }
+
+    .hero-badge i {
+      color: #a0a0b8;
+      font-size: 0.8rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 1rem;
+      color: #f0f0f5;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, #ffffff 0%, #8a8aa0 50%, #ffffff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 4s linear infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+      color: #9a9aac;
+      max-width: 620px;
+      margin-bottom: 2rem;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .hero-subtitle strong {
+      color: #d0d0e0;
+      font-weight: 600;
+    }
+
+    /* Hero energy bars (matching loader) */
+    .hero-energy {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 56px;
+      padding: 0 10px;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .hero-energy .bar {
+      width: 10px;
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(180deg, #d0d0e8, #4a4a58);
+      animation: heroBarJump 1s ease-in-out infinite alternate;
+      box-shadow: 0 0 12px rgba(160, 160, 200, 0.15);
+    }
+
+    .hero-energy .bar:nth-child(1) { height: 25%; animation-delay: 0s; }
+    .hero-energy .bar:nth-child(2) { height: 45%; animation-delay: 0.1s; }
+    .hero-energy .bar:nth-child(3) { height: 70%; animation-delay: 0.2s; }
+    .hero-energy .bar:nth-child(4) { height: 100%; animation-delay: 0.3s; }
+    .hero-energy .bar:nth-child(5) { height: 80%; animation-delay: 0.4s; }
+    .hero-energy .bar:nth-child(6) { height: 55%; animation-delay: 0.5s; }
+    .hero-energy .bar:nth-child(7) { height: 35%; animation-delay: 0.6s; }
+    .hero-energy .bar:nth-child(8) { height: 65%; animation-delay: 0.7s; }
+    .hero-energy .bar:nth-child(9) { height: 95%; animation-delay: 0.8s; }
+    .hero-energy .bar:nth-child(10) { height: 60%; animation-delay: 0.9s; }
+
+    @keyframes heroBarJump {
+      0% { transform: scaleY(0.4); opacity: 0.6; }
+      100% { transform: scaleY(1); opacity: 1; }
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #2e2e38;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+      color: #f0f0f5;
+    }
+
+    .logo img {
+      height: 48px;
+      width: auto;
+      border-radius: 8px;
+      background: #1c1c22;
+      padding: 4px;
+      object-fit: contain;
+      box-shadow: 0 0 24px rgba(140, 140, 180, 0.1);
+    }
+
+    .logo span {
+      background: linear-gradient(135deg, #ffffff 0%, #a0a0b0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .discord-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: #272730;
+      color: #e8e8f0;
+      border-color: #3e3e4a;
+    }
+
+    .btn i {
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: #e8e8f0;
+      color: #0c0c10;
+      border-color: #e8e8f0;
+      box-shadow: 0 0 24px rgba(200, 200, 230, 0.12);
+    }
+
+    .btn-primary:hover {
+      background: #ffffff;
+      border-color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px -8px rgba(200, 200, 220, 0.4);
+    }
+
+    .btn-discord {
+      background: #4a4a5a;
+      color: #f0f0f8;
+      border-color: #5a5a6a;
+    }
+
+    .btn-discord:hover {
+      background: #5a5a6a;
+      border-color: #6a6a7a;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -12px rgba(100, 100, 140, 0.4);
+    }
+
+    /* Category buttons */
+    .category-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+      padding: 1rem;
+      background: rgba(18, 18, 24, 0.88);
+      border: 1px solid #2e2e3a;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      position: relative;
+      box-shadow: 0 4px 32px -12px rgba(0, 0, 0, 0.6);
+    }
+
+    .category-bar::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #5a5a6a, transparent);
+      opacity: 0.6;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .cat-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.7rem 1.35rem;
+      border-radius: 14px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.01em;
+      color: #a0a0b0;
+      background: #1a1a22;
+      border: 1px solid #2e2e3a;
+      cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .cat-btn i {
+      font-size: 0.95rem;
+      transition: transform 0.22s ease, color 0.22s ease;
+    }
+
+    .cat-btn:hover {
+      color: #e8e8f0;
+      border-color: #4a4a5a;
+      background: #22222c;
+      transform: translateY(-1px);
+    }
+
+    .cat-btn.active {
+      color: #0c0c10;
+      background: linear-gradient(135deg, #e8e8f0 0%, #b8b8cc 100%);
+      border-color: #e8e8f0;
+      box-shadow: 0 8px 24px -10px rgba(200, 200, 220, 0.35);
+    }
+
+    .cat-btn.active i {
+      color: #0c0c10;
+      transform: scale(1.1);
+    }
+
+    .cat-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent);
+      opacity: 0;
+      transition: opacity 0.22s;
+    }
+
+    .cat-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Sections */
+    .category-section {
+      display: none;
+      animation: fadeSlide 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .category-section.visible {
+      display: block;
+    }
+
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1.25rem 1.75rem;
+      background: linear-gradient(135deg, rgba(32, 32, 40, 0.95) 0%, rgba(22, 22, 28, 0.9) 100%);
+      border: 1px solid #3a3a48;
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px -16px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    }
+
+    .section-header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #a0a0b8, #4a4a58);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .section-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: #1e1e26;
+      border: 1px solid #3e3e4a;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.6);
+    }
+
+    .section-icon i {
+      font-size: 1.5rem;
+      color: #c0c0d0;
+    }
+
+    .section-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      flex: 1;
+    }
+
+    .section-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #f0f0f5;
+      line-height: 1.2;
+    }
+
+    .section-meta {
+      font-size: 0.85rem;
+      color: #8a8a9a;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-meta .dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #5a5a6a;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      background: #2a2a34;
+      border: 1px solid #444456;
+      color: #b0b0c0;
+      flex-shrink: 0;
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: rgba(26, 26, 32, 0.92);
+      border: 1px solid #32323e;
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(2px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #5a5a6a, transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: #50505e;
+      background: rgba(32, 32, 40, 0.96);
+      transform: translateY(-3px);
+      box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.9), 0 0 32px rgba(140, 140, 180, 0.06);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card .plan-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #f0f0f5;
+      margin-bottom: 0.25rem;
+    }
+
+    .card .plan-price {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #f0f0f5;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .card .plan-price small {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #8a8a9a;
+      letter-spacing: 0;
+    }
+
+    .card .specs {
+      list-style: none;
+      margin-bottom: 1.5rem;
+      flex: 1;
+    }
+
+    .card .specs li {
+      font-size: 0.95rem;
+      color: #b0b0c0;
+      padding: 0.35rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .card .specs li i {
+      font-size: 0.7rem;
+      color: #6a6a7a;
+      width: 14px;
+      text-align: center;
+    }
+
+    .card .btn {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      border-radius: 30px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: #272730;
+      border: 1px solid #3e3e4a;
+      color: #e8e8f0;
+    }
+
+    .card .btn:hover {
+      background: #34343e;
+      border-color: #5a5a6a;
+      transform: translateY(-1px);
+    }
+
+    .compact-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .compact-item {
+      background: rgba(24, 24, 30, 0.9);
+      border: 1px solid #2e2e3a;
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.15s;
+      backdrop-filter: blur(2px);
+    }
+
+    .compact-item:hover {
+      border-color: #4a4a5a;
+      background: rgba(30, 30, 38, 0.95);
+    }
+
+    .compact-item .name {
+      font-weight: 600;
+      color: #d0d0dc;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .compact-item .name i {
+      color: #6a6a7a;
+      font-size: 0.8rem;
+    }
+
+    .compact-item .price {
+      font-weight: 700;
+      color: #f0f0f5;
+      font-size: 1.1rem;
+    }
+
+    .compact-item .price small {
+      font-weight: 400;
+      font-size: 0.8rem;
+      color: #8a8a9a;
+    }
+
+    .vps-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .vps-card {
+      background: rgba(22, 22, 28, 0.92);
+      border: 1px solid #32323e;
+      border-radius: 16px;
+      padding: 1.25rem;
+      text-align: center;
+      backdrop-filter: blur(2px);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vps-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #5a5a6a, transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .vps-card:hover {
+      border-color: #50505e;
+      background: rgba(32, 32, 40, 0.96);
+      transform: translateY(-2px);
+      box-shadow: 0 20px 36px -20px rgba(0, 0, 0, 0.85);
+    }
+
+    .vps-card:hover::before {
+      opacity: 1;
+    }
+
+    .vps-card .vps-name {
+      font-weight: 700;
+      color: #f0f0f5;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .vps-card .vps-spec {
+      font-size: 0.85rem;
+      color: #9a9aac;
+      margin-bottom: 0.25rem;
+    }
+
+    .vps-card .vps-price {
+      font-weight: 800;
+      color: #f0f0f5;
+      font-size: 1.3rem;
+      margin-top: 0.5rem;
+    }
+
+    .vps-card .vps-price small {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #8a8a9a;
+    }
+
+    .note {
+      font-size: 0.85rem;
+      color: #7a7a8a;
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid #2e2e38;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      color: #8a8a9a;
+      font-size: 0.9rem;
+    }
+
+    .footer a {
+      color: #b0b0c0;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer a:hover {
+      color: #f0f0f5;
+    }
+
+    .footer .links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer .links a i {
+      margin-right: 0.3rem;
+    }
+
+    .cta-block {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin: 3.5rem 0 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .category-bar { padding: 0.75rem; gap: 0.5rem; }
+      .cat-btn { padding: 0.6rem 1rem; font-size: 0.82rem; }
+      .ring-container { width: 160px; height: 160px; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 1.25rem 1rem 3rem; }
+      .header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .logo { font-size: 1.4rem; }
+      .logo img { height: 36px; }
+      .hero { padding: 1.5rem 0.5rem 2rem; }
+      .section-header { padding: 1rem 1.25rem; flex-wrap: wrap; }
+      .section-name { font-size: 1.2rem; }
+      .section-icon { width: 42px; height: 42px; }
+      .section-icon i { font-size: 1.2rem; }
+      .section-tag { font-size: 0.7rem; padding: 0.3rem 0.8rem; }
+      .plan-grid { grid-template-columns: 1fr 1fr; }
+      .card { padding: 1.25rem; }
+      .card .plan-price { font-size: 1.5rem; }
+      .category-bar { justify-content: center; }
+      .ring-container { width: 140px; height: 140px; }
+      .loader-logo img { height: 64px; }
+      .hero-energy .bar { width: 8px; }
+    }
+
+    @media (max-width: 420px) {
+      .plan-grid { grid-template-columns: 1fr; }
+      .cat-btn { flex: 1 1 calc(50% - 0.5rem); justify-content: center; }
+      .loader-progress { width: 220px; }
+      .hero-energy .bar { width: 7px; }
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0b0b0d; }
+    ::-webkit-scrollbar-thumb { background: #3e3e4a; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #5a5a6a; }
+  </style>
+</head>
+<body>
+  <div id="loader">
+    <div class="loader-stage">
+      <div class="loader-logo">
+        <div class="ring-container">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+        </div>
+        <img src="dark.png" alt="DARKBYTE CLOUD" onerror="this.style.display='none'; this.parentElement.querySelector('.brand').style.fontSize='1.6rem';">
+        <span class="brand">DARKBYTE CLOUD</span>
+      </div>
+
+      <div class="energy-bars">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+
+      <div class="loader-progress">
+        <div class="fill" id="loaderFill"></div>
+      </div>
+      <div class="loader-hint">Initializing systems</div>
+      <div class="loader-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="particles-canvas"></canvas>
+
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <img src="dark.png" alt="DARKBYTE CLOUD logo" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size:2rem;margin-right:8px;\'>◼</span><span>DARKBYTE</span>';">
+        <span>DARKBYTE CLOUD</span>
+      </div>
+      <div class="discord-cta">
+        <a href="https://discord.gg/umnw77NHPR" class="btn btn-discord" target="_blank" rel="noopener"><i class="fab fa-discord"></i> Join Discord</a>
+        <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn btn-primary" target="_blank" rel="noopener"><i class="fas fa-shopping-cart"></i> Buy Now</a>
+      </div>
+    </header>
+
+    <!-- HERO SECTION WITH ENERGY ANIMATION -->
+    <section class="hero">
+      <div class="hero-badge">
+        <i class="fas fa-bolt"></i> Powered by AMD EPYC & Intel Xeon
+      </div>
+      <h1 class="hero-title">
+        <span class="gradient-text">ULTRA-PREMIUM</span><br>
+        GAME & APP HOSTING
+      </h1>
+      <p class="hero-subtitle">
+        <strong>Low latency.</strong> <strong>High performance.</strong> <strong>DDoS protected.</strong><br>
+        Deploy your server in seconds with our enterprise-grade infrastructure.
+      </p>
+
+      <div class="hero-energy">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+
+      <div class="hero-cta">
+        <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn btn-primary" target="_blank" rel="noopener"><i class="fas fa-rocket"></i> Deploy Now</a>
+        <a href="https://discord.gg/umnw77NHPR" class="btn btn-discord" target="_blank" rel="noopener"><i class="fab fa-discord"></i> Join Community</a>
+      </div>
+    </section>
+
+    <div class="category-bar" id="categoryBar">
+      <button class="cat-btn active" data-category="minecraft"><i class="fas fa-cube"></i> Minecraft</button>
+      <button class="cat-btn" data-category="samp"><i class="fas fa-gamepad"></i> SA-MP</button>
+      <button class="cat-btn" data-category="hytale"><i class="fas fa-dragon"></i> Hytale</button>
+      <button class="cat-btn" data-category="bot"><i class="fas fa-robot"></i> Discord Bots</button>
+      <button class="cat-btn" data-category="web"><i class="fas fa-globe"></i> Website</button>
+      <button class="cat-btn" data-category="fivem"><i class="fas fa-car"></i> FiveM</button>
+      <button class="cat-btn" data-category="lavalink"><i class="fas fa-music"></i> Lavalink</button>
+      <button class="cat-btn" data-category="vps"><i class="fas fa-microchip"></i> Cloud VPS</button>
+    </div>
+
+    <section class="category-section visible" data-section="minecraft">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-cube"></i></div>
+        <div class="section-info">
+          <div class="section-name">Minecraft Hosting</div>
+          <div class="section-meta">
+            <span>High-performance game servers</span>
+            <span class="dot"></span>
+            <span>AMD EPYC</span>
+            <span class="dot"></span>
+            <span>7 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">Gaming</span>
+      </div>
+      <div class="plan-grid">
+        <div class="card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">₹80 <small>/mo</small></div>
+          <ul class="specs">
+            <li><i class="fas fa-memory"></i> 2 GB RAM</li>
+            <li><i class="fas fa-microchip"></i> 65% CPU</li>
+            <li><i class="fas fa-hdd"></i> 10 GB NVMe</li>
+          </ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">₹150 <small>/mo</small></div>
+          <ul class="specs">
+            <li><i class="fas fa-memory"></i> 4 GB RAM</li>
+            <li><i class="fas fa-microchip"></i> 100% CPU</li>
+            <li><i class="fas fa-hdd"></i> 20 GB NVMe</li>
+          </ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Standard</div>
+          <div class="plan-price">₹199 <small>/mo</small></div>
+          <ul class="specs">
+            <li><i class="fas fa-memory"></i> 6 GB RAM</li>
+            <li><i class="fas fa-microchip"></i> 150% CPU</li>
+            <li><i class="fas fa-hdd"></i> 30 GB NVMe</li>
+          </ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Advanced</div>
+          <div class="plan-price">₹330 <small>/mo</small></div>
+          <ul class="specs">
+            <li><i class="fas fa-memory"></i> 8 GB RAM</li>
+            <li><i class="fas fa-microchip"></i> 200% CPU</li>
+            <li><i class="fas fa-hdd"></i> 40 GB NVMe</li>
+          </ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">₹450 <small>/mo</small></div>
+          <ul class="specs">
+            <li><i class="fas fa-memory"></i> 10 GB RAM</li>
+            <li><i class="fas fa-microchip"></i> 260% CPU</li>
+            <li><i class="fas fa-hdd"></i> 50 GB NVMe</li>
+          </ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">₹680 <small>/mo</small></div>
+          <ul class="specs">
+            <li><i class="fas fa-memory"></i> 12 GB RAM</li>
+            <li><i class="fas fa-microchip"></i> 320% CPU</li>
+            <li><i class="fas fa-hdd"></i> 60 GB NVMe</li>
+          </ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Ultimate</div>
+          <div class="plan-price">₹880 <small>/mo</small></div>
+          <ul class="specs">
+            <li><i class="fas fa-memory"></i> 16 GB RAM</li>
+            <li><i class="fas fa-microchip"></i> 420% CPU</li>
+            <li><i class="fas fa-hdd"></i> 70 GB NVMe</li>
+          </ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section" data-section="samp">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-gamepad"></i></div>
+        <div class="section-info">
+          <div class="section-name">SA-MP Hosting</div>
+          <div class="section-meta">
+            <span>San Andreas Multiplayer</span>
+            <span class="dot"></span>
+            <span>AMD EPYC</span>
+            <span class="dot"></span>
+            <span>7 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">Gaming</span>
+      </div>
+      <div class="plan-grid">
+        <div class="card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">₹149 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 2 GB RAM</li><li><i class="fas fa-microchip"></i> 100% CPU</li><li><i class="fas fa-hdd"></i> 15 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">₹249 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 4 GB RAM</li><li><i class="fas fa-microchip"></i> 150% CPU</li><li><i class="fas fa-hdd"></i> 25 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Standard</div>
+          <div class="plan-price">₹349 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 6 GB RAM</li><li><i class="fas fa-microchip"></i> 200% CPU</li><li><i class="fas fa-hdd"></i> 35 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Advanced</div>
+          <div class="plan-price">₹449 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 8 GB RAM</li><li><i class="fas fa-microchip"></i> 250% CPU</li><li><i class="fas fa-hdd"></i> 50 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">₹599 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 10 GB RAM</li><li><i class="fas fa-microchip"></i> 300% CPU</li><li><i class="fas fa-hdd"></i> 65 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">₹749 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 12 GB RAM</li><li><i class="fas fa-microchip"></i> 350% CPU</li><li><i class="fas fa-hdd"></i> 80 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Ultimate</div>
+          <div class="plan-price">₹999 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 16 GB RAM</li><li><i class="fas fa-microchip"></i> 450% CPU</li><li><i class="fas fa-hdd"></i> 100 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section" data-section="hytale">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-dragon"></i></div>
+        <div class="section-info">
+          <div class="section-name">Hytale Hosting</div>
+          <div class="section-meta">
+            <span>Next-gen adventure servers</span>
+            <span class="dot"></span>
+            <span>AMD EPYC</span>
+            <span class="dot"></span>
+            <span>7 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">Gaming</span>
+      </div>
+      <div class="plan-grid">
+        <div class="card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">₹149 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 2 GB RAM</li><li><i class="fas fa-microchip"></i> 100% CPU</li><li><i class="fas fa-hdd"></i> 10 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">₹249 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 4 GB RAM</li><li><i class="fas fa-microchip"></i> 150% CPU</li><li><i class="fas fa-hdd"></i> 20 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Standard</div>
+          <div class="plan-price">₹349 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 6 GB RAM</li><li><i class="fas fa-microchip"></i> 200% CPU</li><li><i class="fas fa-hdd"></i> 30 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Advanced</div>
+          <div class="plan-price">₹449 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 8 GB RAM</li><li><i class="fas fa-microchip"></i> 250% CPU</li><li><i class="fas fa-hdd"></i> 40 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">₹599 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 10 GB RAM</li><li><i class="fas fa-microchip"></i> 300% CPU</li><li><i class="fas fa-hdd"></i> 50 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">₹749 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 12 GB RAM</li><li><i class="fas fa-microchip"></i> 350% CPU</li><li><i class="fas fa-hdd"></i> 60 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Ultimate</div>
+          <div class="plan-price">₹999 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 16 GB RAM</li><li><i class="fas fa-microchip"></i> 450% CPU</li><li><i class="fas fa-hdd"></i> 80 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section" data-section="bot">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-robot"></i></div>
+        <div class="section-info">
+          <div class="section-name">Discord Bot Hosting</div>
+          <div class="section-meta">
+            <span>24/7 bot infrastructure</span>
+            <span class="dot"></span>
+            <span>AMD EPYC</span>
+            <span class="dot"></span>
+            <span>7 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">Bots</span>
+      </div>
+      <div class="plan-grid">
+        <div class="card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">₹99 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 1 GB RAM</li><li><i class="fas fa-microchip"></i> 100% CPU</li><li><i class="fas fa-hdd"></i> 5 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">₹179 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 2 GB RAM</li><li><i class="fas fa-microchip"></i> 150% CPU</li><li><i class="fas fa-hdd"></i> 10 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Standard</div>
+          <div class="plan-price">₹299 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 4 GB RAM</li><li><i class="fas fa-microchip"></i> 200% CPU</li><li><i class="fas fa-hdd"></i> 20 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Advanced</div>
+          <div class="plan-price">₹399 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 6 GB RAM</li><li><i class="fas fa-microchip"></i> 250% CPU</li><li><i class="fas fa-hdd"></i> 30 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">₹549 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 8 GB RAM</li><li><i class="fas fa-microchip"></i> 300% CPU</li><li><i class="fas fa-hdd"></i> 40 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">₹749 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 12 GB RAM</li><li><i class="fas fa-microchip"></i> 400% CPU</li><li><i class="fas fa-hdd"></i> 60 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Ultimate</div>
+          <div class="plan-price">₹999 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 16 GB RAM</li><li><i class="fas fa-microchip"></i> 500% CPU</li><li><i class="fas fa-hdd"></i> 80 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section" data-section="web">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-globe"></i></div>
+        <div class="section-info">
+          <div class="section-name">Website Hosting</div>
+          <div class="section-meta">
+            <span>Reliable web infrastructure</span>
+            <span class="dot"></span>
+            <span>AMD EPYC</span>
+            <span class="dot"></span>
+            <span>7 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">Web</span>
+      </div>
+      <div class="compact-list">
+        <div class="compact-item"><span class="name"><i class="fas fa-server"></i> Starter</span><span class="price">₹99 <small>/mo</small></span></div>
+        <div class="compact-item"><span class="name"><i class="fas fa-server"></i> Basic</span><span class="price">₹199 <small>/mo</small></span></div>
+        <div class="compact-item"><span class="name"><i class="fas fa-server"></i> Standard</span><span class="price">₹299 <small>/mo</small></span></div>
+        <div class="compact-item"><span class="name"><i class="fas fa-server"></i> Advanced</span><span class="price">₹449 <small>/mo</small></span></div>
+        <div class="compact-item"><span class="name"><i class="fas fa-server"></i> Pro</span><span class="price">₹649 <small>/mo</small></span></div>
+        <div class="compact-item"><span class="name"><i class="fas fa-server"></i> Premium</span><span class="price">₹899 <small>/mo</small></span></div>
+        <div class="compact-item"><span class="name"><i class="fas fa-server"></i> Business</span><span class="price">₹1,299 <small>/mo</small></span></div>
+      </div>
+      <div class="note"><i class="fas fa-info-circle"></i> 1–50 websites, 2–24 GB RAM, 10–250 GB NVMe, email accounts included.</div>
+    </section>
+
+    <section class="category-section" data-section="fivem">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-car"></i></div>
+        <div class="section-info">
+          <div class="section-name">FiveM Hosting</div>
+          <div class="section-meta">
+            <span>GTA V multiplayer servers</span>
+            <span class="dot"></span>
+            <span>AMD EPYC</span>
+            <span class="dot"></span>
+            <span>7 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">Gaming</span>
+      </div>
+      <div class="plan-grid">
+        <div class="card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">₹249 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 4 GB RAM</li><li><i class="fas fa-microchip"></i> 150% CPU</li><li><i class="fas fa-hdd"></i> 30 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">₹349 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 6 GB RAM</li><li><i class="fas fa-microchip"></i> 200% CPU</li><li><i class="fas fa-hdd"></i> 40 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Standard</div>
+          <div class="plan-price">₹449 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 8 GB RAM</li><li><i class="fas fa-microchip"></i> 250% CPU</li><li><i class="fas fa-hdd"></i> 50 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Advanced</div>
+          <div class="plan-price">₹599 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 10 GB RAM</li><li><i class="fas fa-microchip"></i> 300% CPU</li><li><i class="fas fa-hdd"></i> 65 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">₹749 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 12 GB RAM</li><li><i class="fas fa-microchip"></i> 350% CPU</li><li><i class="fas fa-hdd"></i> 80 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">₹999 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 16 GB RAM</li><li><i class="fas fa-microchip"></i> 400% CPU</li><li><i class="fas fa-hdd"></i> 100 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Ultimate</div>
+          <div class="plan-price">₹1,399 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 24 GB RAM</li><li><i class="fas fa-microchip"></i> 500% CPU</li><li><i class="fas fa-hdd"></i> 150 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section" data-section="lavalink">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-music"></i></div>
+        <div class="section-info">
+          <div class="section-name">Lavalink Hosting</div>
+          <div class="section-meta">
+            <span>Low-latency audio streaming</span>
+            <span class="dot"></span>
+            <span>AMD EPYC</span>
+            <span class="dot"></span>
+            <span>7 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">Audio</span>
+      </div>
+      <div class="plan-grid">
+        <div class="card">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">₹100 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 1 GB RAM</li><li><i class="fas fa-microchip"></i> 100% CPU</li><li><i class="fas fa-hdd"></i> 5 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Basic</div>
+          <div class="plan-price">₹179 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 2 GB RAM</li><li><i class="fas fa-microchip"></i> 150% CPU</li><li><i class="fas fa-hdd"></i> 10 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Standard</div>
+          <div class="plan-price">₹299 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 4 GB RAM</li><li><i class="fas fa-microchip"></i> 200% CPU</li><li><i class="fas fa-hdd"></i> 15 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Advanced</div>
+          <div class="plan-price">₹449 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 6 GB RAM</li><li><i class="fas fa-microchip"></i> 250% CPU</li><li><i class="fas fa-hdd"></i> 25 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Pro</div>
+          <div class="plan-price">₹599 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 8 GB RAM</li><li><i class="fas fa-microchip"></i> 300% CPU</li><li><i class="fas fa-hdd"></i> 35 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Premium</div>
+          <div class="plan-price">₹799 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 12 GB RAM</li><li><i class="fas fa-microchip"></i> 400% CPU</li><li><i class="fas fa-hdd"></i> 50 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+        <div class="card">
+          <div class="plan-name">Ultimate</div>
+          <div class="plan-price">₹999 <small>/mo</small></div>
+          <ul class="specs"><li><i class="fas fa-memory"></i> 16 GB RAM</li><li><i class="fas fa-microchip"></i> 500% CPU</li><li><i class="fas fa-hdd"></i> 75 GB NVMe</li></ul>
+          <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn" target="_blank" rel="noopener"><i class="fas fa-arrow-right"></i> Order</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section" data-section="vps">
+      <div class="section-header">
+        <div class="section-icon"><i class="fas fa-microchip"></i></div>
+        <div class="section-info">
+          <div class="section-name">DarkByte Cloud VPS</div>
+          <div class="section-meta">
+            <span>Enterprise virtual servers</span>
+            <span class="dot"></span>
+            <span>Intel Xeon</span>
+            <span class="dot"></span>
+            <span>5 plans</span>
+          </div>
+        </div>
+        <span class="section-tag">VPS</span>
+      </div>
+      <div class="vps-row">
+        <div class="vps-card">
+          <div class="vps-name">VPS-16G</div>
+          <div class="vps-spec">4 vCPU • 16 GB RAM • 180 GB Disk</div>
+          <div class="vps-price">₹1,199 <small>/mo</small></div>
+        </div>
+        <div class="vps-card">
+          <div class="vps-name">VPS-24G</div>
+          <div class="vps-spec">6 vCPU • 24 GB RAM • 250 GB Disk</div>
+          <div class="vps-price">₹1,699 <small>/mo</small></div>
+        </div>
+        <div class="vps-card">
+          <div class="vps-name">VPS-32G</div>
+          <div class="vps-spec">8 vCPU • 32 GB RAM • 350 GB Disk</div>
+          <div class="vps-price">₹2,199 <small>/mo</small></div>
+        </div>
+        <div class="vps-card">
+          <div class="vps-name">VPS-48G</div>
+          <div class="vps-spec">10 vCPU • 48 GB RAM • 500 GB Disk</div>
+          <div class="vps-price">₹3,299 <small>/mo</small></div>
+        </div>
+        <div class="vps-card">
+          <div class="vps-name">FULL NODE</div>
+          <div class="vps-spec">14 vCPU • 60 GB RAM • Entire Disk</div>
+          <div class="vps-price">₹4,200 <small>/mo</small></div>
+        </div>
+      </div>
+      <div class="note"><i class="fas fa-server"></i> Intel Xeon • DarkByte Cloud • VPS / Game / Web Hosting</div>
+    </section>
+
+    <div class="cta-block">
+      <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" class="btn btn-primary" style="padding: 0.9rem 3rem; font-size: 1.1rem;" target="_blank" rel="noopener"><i class="fas fa-shopping-cart"></i> Order Now — Open a Ticket</a>
+      <a href="https://discord.gg/umnw77NHPR" class="btn btn-discord" style="padding: 0.9rem 2.5rem; font-size: 1.1rem;" target="_blank" rel="noopener"><i class="fab fa-discord"></i> Join Discord</a>
+    </div>
+    <div class="note" style="margin-bottom: 2rem;">All purchases & support via Discord ticket.</div>
+
+    <footer class="footer">
+      <div>© 2026 DARKBYTE CLOUD — Premium Hosting. AMD EPYC & Intel Xeon.</div>
+     <div>created by  MRXg60 </div>
+      <div class="links">
+        <a href="https://discord.gg/umnw77NHPR" target="_blank" rel="noopener"><i class="fab fa-discord"></i> Discord</a>
+        <a href="https://discord.com/channels/1550761966161629194/1551928391597559878" target="_blank" rel="noopener"><i class="fas fa-shopping-cart"></i> Order</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      const loader = document.getElementById('loader');
+      const fill = document.getElementById('loaderFill');
+      let progress = 0;
+
+      const interval = setInterval(() => {
+        if (progress < 40) {
+          progress += Math.random() * 7 + 6;
+        } else if (progress < 70) {
+          progress += Math.random() * 5 + 4;
+        } else if (progress < 92) {
+          progress += Math.random() * 4 + 2;
+        } else {
+          progress += Math.random() * 3 + 1;
+        }
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          setTimeout(() => {
+            loader.classList.add('hidden');
+            setTimeout(() => { loader.remove(); }, 900);
+          }, 250);
+        }
+        fill.style.width = Math.min(progress, 100) + '%';
+      }, 55);
+    })();
+
+    (function() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      let width, height;
+      let particles = [];
+      const PARTICLE_DENSITY = 0.00015;
+
+      const COLORS = [
+        'rgba(100, 100, 120, 0.5)',
+        'rgba(80, 80, 100, 0.45)',
+        'rgba(120, 120, 145, 0.35)',
+        'rgba(70, 70, 90, 0.55)',
+        'rgba(90, 90, 112, 0.4)',
+        'rgba(110, 110, 132, 0.3)',
+        'rgba(65, 65, 82, 0.6)'
+      ];
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initParticles();
+      }
+
+      function initParticles() {
+        const count = Math.floor(width * height * PARTICLE_DENSITY);
+        particles = [];
+        for (let i = 0; i < count; i++) {
+          const radius = Math.random() * 2.2 + 0.6;
+          particles.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.25,
+            vy: (Math.random() - 0.5) * 0.25,
+            radius: radius,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            baseAlpha: 0.3 + Math.random() * 0.5,
+            pulseSpeed: 0.002 + Math.random() * 0.004,
+            pulsePhase: Math.random() * Math.PI * 2,
+            shape: Math.random() > 0.7 ? 'square' : 'circle'
+          });
+        }
+      }
+
+      let time = 0;
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        time += 1;
+
+        for (let p of particles) {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < -10) p.x = width + 10;
+          if (p.x > width + 10) p.x = -10;
+          if (p.y < -10) p.y = height + 10;
+          if (p.y > height + 10) p.y = -10;
+
+          const pulse = Math.sin(time * p.pulseSpeed + p.pulsePhase) * 0.15;
+          const alpha = Math.min(1, Math.max(0, p.baseAlpha + pulse));
+
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = p.color;
+
+          if (p.shape === 'circle') {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            const s = p.radius * 1.4;
+            ctx.fillRect(p.x - s/2, p.y - s/2, s, s);
+          }
+        }
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      draw();
+    })();
+
+    (function() {
+      const bar = document.getElementById('categoryBar');
+      const buttons = bar.querySelectorAll('.cat-btn');
+      const sections = document.querySelectorAll('.category-section');
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cat = btn.dataset.category;
+
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+
+          sections.forEach(sec => {
+            sec.classList.remove('visible');
+            if (sec.dataset.section === cat) {
+              sec.classList.add('visible');
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
